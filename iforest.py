@@ -203,8 +203,8 @@ class LeafNode:
 
 def find_TPR_threshold(y, scores, desired_TPR):
     """
-    Helper function to find the threshold to meet our desired True 
-    Positive Rate (TPR).
+    Helper function to find the threshold for anomaly_score to meet our 
+    desired True Positive Rate (TPR).
 
     Start at score threshold 1.0 and work down until we hit desired TPR.
     Step by 0.01 score increments. For each threshold, compute the TPR
