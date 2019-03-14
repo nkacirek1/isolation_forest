@@ -13,13 +13,13 @@ def add_noise(df, n_noise):
         df[f'noise_{i}'] = np.random.normal(-2,2,len(df))
 
 
-def plot_anomalies(X, y, sample_size=256, n_trees = 100, desired_TPR=None, percentile = None, normal_ymax=None, bins=20):
+def plot_anomalies(X, y, desired_TPR, sample_size=256, n_trees=100, bins=20, improved=False):
     N = len(X)
 
     it = IsolationTreeEnsemble(sample_size=sample_size, n_trees=n_trees)
 
     fit_start = time.time()
-    it.fit(X)
+    it.fit(X, improved=improved)
     fit_stop = time.time()
     fit_time = fit_stop - fit_start
     print(f"fit time {fit_time:3.2f}s")
@@ -31,11 +31,8 @@ def plot_anomalies(X, y, sample_size=256, n_trees = 100, desired_TPR=None, perce
     print(f"score time {score_time:3.2f}s")
 
     temp_copy = scores.copy()
-    if desired_TPR is not None:
-        threshold, FPR = find_TPR_threshold(y, temp_copy, desired_TPR)
-        print(f"Computed {desired_TPR:.4f} TPR threshold {threshold:.4f} with FPR {FPR:.4f}")
-    else:
-        threshold = np.percentile(temp_copy, percentile)
+    threshold, FPR = find_TPR_threshold(y, temp_copy, desired_TPR)
+    print(f"Computed {desired_TPR:.4f} TPR threshold {threshold:.4f} with FPR {FPR:.4f}")
     temp_copy2 = scores.copy()
     y_pred = it.predict_from_anomaly_scores(temp_copy2, threshold=threshold)
     confusion = confusion_matrix(y, y_pred)
@@ -65,32 +62,9 @@ def plot_anomalies(X, y, sample_size=256, n_trees = 100, desired_TPR=None, perce
     axes[0].text(text_xr, .65 * max(counts0), f"TPR {TPR:.4f}, FPR {FPR:.4f}", horizontalalignment='right')
     axes[0].text(threshold+.005, .20 * max(counts0), f"score threshold {threshold:.3f}")
     axes[0].text(threshold+.005, .10 * max(counts0), f"True anomaly rate {len(anomalies) / len(normal):.4f}")
-    if normal_ymax is not None:
-        axes[0].set_ylim(0, normal_ymax)
+
     plt.tight_layout()
     plt.savefig(f"creditcard-{n_trees}-{int(desired_TPR*100)}.svg",
                 bbox_inches='tight',
                 pad_inches=0)
     plt.show()
-
-
-if __name__ == '__main__': # dask seems to need this
-    # launch with "python plot_anomalies.py http.csv attack 20000 256 100 99"
-    # or, "python plot_anomalies.py cancer.csv diagnosis all 5 1000 80
-    datafile = sys.argv[1]
-    targetcol = sys.argv[2]
-    sample_size = int(sys.argv[4])
-    n_trees = int(sys.argv[5])
-    desired_TPR = int(sys.argv[6])
-    desired_TPR /= 100.0
-
-    df = pd.read_csv(datafile)
-
-    if sys.argv[3]=='all':
-        N = len(df)
-    else:
-        N = int(sys.argv[3])
-
-    df = df.sample(N)  # grab random subset (too slow otherwise)
-    X, y = df.drop(targetcol, axis=1), df[targetcol]
-    plot_anomalies(X, y, sample_size=sample_size, n_trees=n_trees, desired_TPR=desired_TPR, bins=15)
