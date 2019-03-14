@@ -6,17 +6,17 @@ Isolation Trees are similar to Decision Trees in that they have a series of inne
 
 The idea behind the algoithm is that **anomolies are "few and different"** and can therefore be **isolated with fewer random decision splits** than a normal observation.   
 
-<center>
+<p align="center">
 	<img width="350" src="photos/isof.png" align="middle">
-</center>
+</p>
 
 For example, in the picture above, point X<sub>0</sub> was isolated into it's own region with only four splits, while point X<sub>i</sub> took eleven splits to isolate.Therefore, X<sub>0</sub> is *more* anomalous than X<sub>i</sub>.   
 
 After an Isolation Tree is built, the "number of splits" required to isolate a given point is measured by it's *Path Length*. For one tree, the path length of a point *x* is approximately the number of edges from the root node to the terminating node containing *x*.<sup>1</sup> The point *x*'s *Anomaly Score* is 2 to the negative power of (the average of it's path length across all the trees in the forest / the size of the trees). 
 
-<center>
+<p align="center">
 	<img width="200" src="photos/score.png">
-</center>
+</p>
 
 ## My Implementation
 Inside this repo, you can find my implementation of Isolation Forest.
