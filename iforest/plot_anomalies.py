@@ -10,7 +10,7 @@ from iforest import IsolationTreeEnsemble, find_TPR_threshold
 
 def add_noise(df, n_noise):
     for i in range(n_noise):
-        df[f'noise_{i}'] = np.random.normal(-2,2,len(df))
+        df[f'noise_{i}'] = np.random.normal(0,100,len(df))
 
 
 def plot_anomalies(X, y, desired_TPR, sample_size=256, n_trees=100, bins=20, improved=False):
@@ -64,7 +64,4 @@ def plot_anomalies(X, y, desired_TPR, sample_size=256, n_trees=100, bins=20, imp
     axes[0].text(threshold+.005, .10 * max(counts0), f"True anomaly rate {len(anomalies) / len(normal):.4f}")
 
     plt.tight_layout()
-    plt.savefig(f"creditcard-{n_trees}-{int(desired_TPR*100)}.svg",
-                bbox_inches='tight',
-                pad_inches=0)
     plt.show()
