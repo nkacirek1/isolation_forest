@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 import math
+from sklearn.metrics import confusion_matrix
 
 
 class IsolationTreeEnsemble:
@@ -198,3 +199,36 @@ class DecisionNode:
 class LeafNode:
     def __init__(self, x_shape_0):
         self.x_shape_0 = x_shape_0
+
+
+def find_TPR_threshold(y, scores, desired_TPR):
+    """
+    Helper function to find the threshold to meet our desired True 
+    Positive Rate (TPR).
+
+    Start at score threshold 1.0 and work down until we hit desired TPR.
+    Step by 0.01 score increments. For each threshold, compute the TPR
+    and FPR to see if we've reached to the desired TPR. If so, return the
+    score threshold and FPR.
+
+    Used by scoring test rig
+    """
+
+    it = IsolationTreeEnsemble(100)
+
+    threshold_range = np.arange(1.0, 0.0, -0.005)
+
+    for threshold in threshold_range:
+        temp = scores.copy()
+        y_pred = it.predict_from_anomaly_scores(temp, threshold=threshold)
+        confusion = confusion_matrix(y, y_pred)
+        TN, FP, FN, TP = confusion.flat
+        TPR = TP / (TP + FN)
+        FPR = FP / (FP + TN)
+
+        if TPR >= desired_TPR:
+            return threshold, FPR
+
+    print("never met condition")
+
+    return -1
