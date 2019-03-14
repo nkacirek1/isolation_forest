@@ -28,4 +28,4 @@ Inside this repo, you can find my implementation of Isolation Forest.
 ----
 #### References
 1. Liu, Fei Tony, et al. “Isolation Forest.” 2008 Eighth IEEE International Conference on Data Mining, 2008, doi:10.1109/icdm.2008.17.
-2. Parrt, Terrence. “Parrt/msds689.” GitHub, 2019, [github.com/parrt/msds689/blob/master/projects/iforest/plot_anomalies.py](github.com/parrt/msds689/blob/master/projects/iforest/plot_anomalies.py).
+2. Parrt, Terrence. “Parrt/msds689.” GitHub, 2019, [github.com/parrt/msds689/blob/master/projects/iforest/plot_anomalies.py](https://github.com/parrt/msds689/blob/master/projects/iforest/plot_anomalies.py).
